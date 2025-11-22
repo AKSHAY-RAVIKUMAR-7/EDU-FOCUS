@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduFocus - Smart Learning Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduFocus</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link active">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#study-materials" class="nav-link">Study Materials</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#focus-tracker" class="nav-link">Focus Tracker</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#pdf-summarizer" class="nav-link">PDF Summarizer</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#profile" class="nav-link">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">Smart Learning with Focus Tracking</h1>
+                    <p class="hero-subtitle">Enhance your learning experience with AI-powered focus monitoring and PDF summarization</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="showSection('focus-tracker')">
+                            <i class="fas fa-eye"></i>
+                            Start Focus Tracking
+                        </button>
+                        <button class="btn btn-secondary" onclick="showSection('pdf-summarizer')">
+                            <i class="fas fa-file-pdf"></i>
+                            Summarize PDF
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="floating-cards">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-brain"></i>
+                            <span>AI-Powered Learning</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Smart Analytics</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-trophy"></i>
+                            <span>Achievement System</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Focus Tracking</h3>
+                    <p>Monitor your attention levels using advanced eye-tracking technology</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-text"></i>
+                    </div>
+                    <h3>PDF Summarization</h3>
+                    <p>Get instant AI-generated summaries of your study materials</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progress Analytics</h3>
+                    <p>Track your learning progress with detailed statistics</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Study Materials</h3>
+                    <p>Access a wide variety of subjects and learning resources</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section">
+            <div class="section-header">
+                <h2>Dashboard</h2>
+                <p>Your learning progress overview</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-study-time">0h 0m</h3>
+                        <p>Total Study Time</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="average-focus">0%</h3>
+                        <p>Average Focus</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="pdfs-summarized">0</h3>
+                        <p>PDFs Summarized</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="study-streak">0</h3>
+                        <p>Study Streak</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>Focus Levels Over Time</h3>
+                <canvas id="focus-chart"></canvas>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div id="activity-list" class="activity-list">
+                    <div class="activity-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Welcome to EduFocus! Start tracking your focus to see activity here.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Focus Tracker Section -->
+        <section id="focus-tracker" class="section">
+            <div class="section-header">
+                <h2>Focus Tracker</h2>
+                <p>Monitor your attention levels in real-time</p>
+            </div>
+
+            <div class="focus-container">
+                <div class="camera-container">
+                    <video id="camera-feed" autoplay muted></video>
+                    <canvas id="face-canvas"></canvas>
+                    <div class="camera-overlay">
+                        <div class="focus-indicator" id="focus-indicator">
+                            <div class="focus-level" id="focus-level">0%</div>
+                            <div class="focus-status" id="focus-status">Click Start to begin tracking</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="focus-controls">
+                    <button id="start-tracking" class="btn btn-primary">
+                        <i class="fas fa-play"></i>
+                        Start Tracking
+                    </button>
+                    <button id="stop-tracking" class="btn btn-danger" disabled>
+                        <i class="fas fa-stop"></i>
+                        Stop Tracking
+                    </button>
+                    <button id="toggle-camera" class="btn btn-secondary">
+                        <i class="fas fa-video"></i>
+                        Toggle Camera
+                    </button>
+                </div>
+
+                <div class="focus-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Session Time:</span>
+                        <span id="session-time" class="stat-value">00:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Current Focus:</span>
+                        <span id="current-focus" class="stat-value">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Average Focus:</span>
+                        <span id="session-average" class="stat-value">0%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PDF Summarizer Section -->
+        <section id="pdf-summarizer" class="section">
+            <div class="section-header">
+                <h2>PDF Summarizer</h2>
+                <p>Upload your study materials for AI-powered summaries</p>
+            </div>
+
+            <div class="pdf-container">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Upload your PDF</h3>
+                        <p>Drag and drop your PDF file here, or click to browse</p>
+                        <input type="file" id="pdf-input" accept=".pdf" hidden>
+                        <button class="btn btn-primary" onclick="document.getElementById('pdf-input').click()">
+                            <i class="fas fa-file-upload"></i>
+                            Choose File
+                        </button>
+                    </div>
+                </div>
+
+                <div class="processing-area" id="processing-area" style="display: none;">
+                    <div class="processing-content">
+                        <div class="spinner"></div>
+                        <h3>Processing your PDF...</h3>
+                        <p>Our AI is analyzing and summarizing your document</p>
+                    </div>
+                </div>
+
+                <div class="summary-area" id="summary-area" style="display: none;">
+                    <div class="summary-header">
+                        <h3 id="pdf-title">Document Summary</h3>
+                        <button class="btn btn-secondary" onclick="resetPdfUpload()">
+                            <i class="fas fa-plus"></i>
+                            Upload Another
+                        </button>
+                    </div>
+                    <div class="summary-content" id="summary-content">
+                        <!-- Summary will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Study Materials Section -->
+        <section id="study-materials" class="section">
+            <div class="section-header">
+                <h2>Study Materials</h2>
+                <p>Access a wide variety of subjects and learning resources</p>
+            </div>
+
+            <div class="subjects-grid">
+                <div class="subject-card" onclick="showSubjectDetails('mathematics')">
+                    <div class="subject-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>Mathematics</h3>
+                    <p>Algebra, Calculus, Statistics</p>
+                </div>
+                
+                <div class="subject-card" onclick="showSubjectDetails('science')">
+                    <div class="subject-icon">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <h3>Science</h3>
+                    <p>Physics, Chemistry, Biology</p>
+                </div>
+                
+                <div class="subject-card" onclick="showSubjectDetails('computer-science')">
+                    <div class="subject-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Computer Science</h3>
+                    <p>Programming, Algorithms, Data Structures</p>
+                </div>
+                
+                <div class="subject-card" onclick="showSubjectDetails('languages')">
+                    <div class="subject-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3>Languages</h3>
+                    <p>English, Spanish, French</p>
+                </div>
+                
+                <div class="subject-card" onclick="showSubjectDetails('history')">
+                    <div class="subject-icon">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3>History</h3>
+                    <p>World History, Ancient Civilizations</p>
+                </div>
+                
+                <div class="subject-card" onclick="showSubjectDetails('arts')">
+                    <div class="subject-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Arts</h3>
+                    <p>Visual Arts, Music, Literature</p>
+                </div>
+            </div>
+
+            <div class="study-tools">
+                <h3>Study Tools</h3>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <i class="fas fa-sticky-note"></i>
+                        <h4>Flashcards</h4>
+                        <p>Create and review flashcards for any subject</p>
+                    </div>
+                    <div class="tool-card">
+                        <i class="fas fa-clock"></i>
+                        <h4>Pomodoro Timer</h4>
+                        <p>Use the Pomodoro technique for better focus</p>
+                    </div>
+                    <div class="tool-card">
+                        <i class="fas fa-tasks"></i>
+                        <h4>Todo Lists</h4>
+                        <p>Organize your study tasks and assignments</p>
+                    </div>
+                    <div class="tool-card">
+                        <i class="fas fa-chart-bar"></i>
+                        <h4>Progress Tracker</h4>
+                        <p>Monitor your learning progress over time</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="section">
+            <div class="section-header">
+                <h2>Profile</h2>
+                <p>Manage your account and preferences</p>
+            </div>
+
+            <div class="profile-container">
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="user-name">Student</h3>
+                        <p id="user-email">student@example.com</p>
+                        <button class="btn btn-secondary">Edit Profile</button>
+                    </div>
+                </div>
+
+                <div class="preferences-card">
+                    <h3>Preferences</h3>
+                    <div class="preference-item">
+                        <label for="focus-sensitivity">Focus Sensitivity</label>
+                        <input type="range" id="focus-sensitivity" min="1" max="10" value="5">
+                    </div>
+                    <div class="preference-item">
+                        <label for="notifications">Notifications</label>
+                        <input type="checkbox" id="notifications" checked>
+                    </div>
+                    <div class="preference-item">
+                        <label for="dark-mode">Dark Mode</label>
+                        <input type="checkbox" id="dark-mode">
+                    </div>
+                </div>
+
+                <div class="achievements-card">
+                    <h3>Achievements</h3>
+                    <div class="achievements-grid">
+                        <div class="achievement">
+                            <i class="fas fa-medal"></i>
+                            <span>First Study Session</span>
+                        </div>
+                        <div class="achievement locked">
+                            <i class="fas fa-lock"></i>
+                            <span>1 Hour Focused</span>
+                        </div>
+                        <div class="achievement locked">
+                            <i class="fas fa-lock"></i>
+                            <span>10 PDFs Summarized</span>
+                        </div>
+                        <div class="achievement locked">
+                            <i class="fas fa-lock"></i>
+                            <span>7-Day Streak</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="js/session-check.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/focus-tracker.js"></script>
+    <script src="js/pdf-summarizer.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
