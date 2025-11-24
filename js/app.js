@@ -189,6 +189,15 @@ class EduFocusApp {
         this.updateStats();
         this.updateActivityList();
         this.updateAchievements();
+        
+        // Initialize or refresh the focus chart
+        if (window.dashboard) {
+            setTimeout(() => {
+                window.dashboard.setupChartData();
+                window.dashboard.createFocusChart();
+                console.log('Dashboard chart refreshed');
+            }, 100);
+        }
     }
 
     updateStats() {

@@ -1,18 +1,39 @@
-/* Login Page Styles - Ultra Modern & Interactive */
+/* Login Page Styles - Futuristic & Interactive */
 
 :root {
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
+    /* Dark Theme Variables */
+    --primary-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    --secondary-gradient: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    --accent-gradient: linear-gradient(135deg, #6c5ce7 0%, #74b9ff 100%);
+    --neon-gradient: linear-gradient(135deg, #6c5ce7, #74b9ff);
+    --neon-blue: #74b9ff;
+    --neon-purple: #6c5ce7;
+    --neon-pink: #fd79a8;
+    --glass-bg: rgba(15, 15, 35, 0.8);
+    --glass-border: rgba(116, 185, 255, 0.3);
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.8);
-    --shadow-glow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    --shadow-intense: 0 30px 60px rgba(0, 0, 0, 0.3);
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --shadow-glow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    --shadow-intense: 0 30px 60px rgba(0, 0, 0, 0.6);
+    --neon-glow: 0 0 20px rgba(116, 185, 255, 0.5);
     --border-radius: 20px;
     --animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --animation-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Light Theme Variables */
+[data-theme="light"] {
+    --primary-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(108, 92, 231, 0.2);
+    --text-primary: #212529;
+    --text-secondary: rgba(33, 37, 41, 0.8);
+    --text-muted: rgba(33, 37, 41, 0.6);
+    --neon-blue: #0066cc;
+    --neon-purple: #5a4fcf;
+    --shadow-glow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    --shadow-intense: 0 30px 60px rgba(0, 0, 0, 0.15);
 }
 
 * {
@@ -27,6 +48,53 @@ body {
     overflow: hidden;
     position: relative;
     background: var(--primary-gradient);
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(108, 92, 231, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(116, 185, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(116, 185, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+    animation: futuristicPulse 8s ease-in-out infinite;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(45deg, transparent 30%, rgba(108, 92, 231, 0.03) 50%, transparent 70%),
+        linear-gradient(-45deg, transparent 30%, rgba(162, 155, 254, 0.03) 50%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    animation: scanLines 15s linear infinite;
+}
+
+@keyframes futuristicPulse {
+    0%, 100% { 
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes scanLines {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
 }
 
 /* Animated Background */
@@ -170,6 +238,8 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
 }
 
 .particle {
@@ -192,6 +262,29 @@ body {
         transform: translateY(-100px) translateX(100px);
         opacity: 0;
     }
+}
+
+/* Enhanced Cyberpunk Grid Effect */
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(rgba(108, 92, 231, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108, 92, 231, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+@keyframes gridMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
 }
 
 /* Main Login Container */
@@ -277,10 +370,11 @@ body {
 }
 
 .letter.highlight {
-    background: linear-gradient(135deg, #ff6b6b, #ffd93d);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--neon-blue);
+    text-shadow: 
+        0 0 20px currentColor,
+        0 0 40px currentColor,
+        0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .letter:nth-child(1) { animation-delay: 0.1s; }
@@ -307,22 +401,83 @@ body {
     font-size: 1.1rem;
     color: var(--text-secondary);
     animation: fadeInUp 1s ease 1s both;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* Login Card */
 .login-card {
     grid-area: card;
+    position: relative;
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: var(--border-radius);
     padding: 3rem;
-    box-shadow: var(--shadow-intense);
+    box-shadow: 
+        var(--shadow-intense),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     animation: slideInRight 1s var(--animation-bounce) 0.4s both;
     transition: all 0.3s ease;
     max-width: 420px;
     width: 100%;
     justify-self: center;
+    overflow: hidden;
+}
+
+/* Holographic scanning effect */
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: left 0.6s ease;
+    z-index: 1;
+}
+
+.login-card:hover::before {
+    left: 100%;
+}
+
+/* Futuristic border glow */
+.login-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(
+        45deg,
+        var(--neon-blue),
+        var(--neon-purple),
+        var(--neon-pink),
+        var(--neon-blue)
+    );
+    border-radius: var(--border-radius);
+    opacity: 0;
+    z-index: -1;
+    animation: hologramBorder 3s linear infinite;
+    background-size: 300% 300%;
+}
+
+@keyframes hologramBorder {
+    0%, 100% { 
+        opacity: 0;
+        background-position: 0% 50%;
+    }
+    50% { 
+        opacity: 0.6;
+        background-position: 100% 50%;
+    }
 }
 
 .login-card:hover {
@@ -413,14 +568,37 @@ body {
 
 .input-wrapper {
     position: relative;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+}
+
+/* Futuristic neon line effect */
+.input-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--neon-gradient);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.input-wrapper:focus-within::before {
+    transform: scaleX(1);
 }
 
 .input-wrapper input {
     width: 100%;
     padding: 1rem 1rem 1rem 3rem;
     border: none;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
+    background: transparent;
+    border-radius: 12px;
     color: var(--text-primary);
     font-size: 1rem;
     transition: all 0.3s ease;
@@ -429,15 +607,16 @@ body {
 
 .input-wrapper input:focus {
     outline: none;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(108, 92, 231, 0.2);
 }
 
 .input-wrapper input:focus + .floating-label,
 .input-wrapper input:valid + .floating-label {
     transform: translateY(-2.5rem) scale(0.85);
-    color: #4ecdc4;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px currentColor;
 }
 
 .floating-label {
@@ -600,7 +779,7 @@ body {
     padding: 1rem;
     border: none;
     border-radius: 15px;
-    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    background: var(--neon-gradient);
     color: var(--text-primary);
     font-size: 1.1rem;
     font-weight: 600;
@@ -609,15 +788,25 @@ body {
     position: relative;
     overflow: hidden;
     margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 
+        0 10px 30px rgba(108, 92, 231, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .submit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(78, 205, 196, 0.4);
+    box-shadow: 
+        0 15px 40px rgba(108, 92, 231, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .submit-btn:active {
     transform: translateY(0);
+    box-shadow: 
+        0 5px 15px rgba(108, 92, 231, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .submit-btn::before {
@@ -627,8 +816,13 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.6s ease;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: left 0.5s ease;
 }
 
 .submit-btn:hover::before {
@@ -1057,4 +1251,62 @@ body {
         padding: 0.6rem 1rem;
         font-size: 0.9rem;
     }
+}
+
+/* Theme Toggle */
+.theme-toggle-container {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 1000;
+}
+
+.theme-toggle-btn {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: var(--glass-bg);
+    border: 2px solid var(--neon-blue);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--neon-glow);
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        var(--neon-glow),
+        0 0 30px rgba(116, 185, 255, 0.6);
+}
+
+.theme-icon {
+    position: absolute;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    color: var(--neon-blue);
+}
+
+.theme-icon.light {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.theme-icon.dark {
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+[data-theme="light"] .theme-icon.light {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+[data-theme="light"] .theme-icon.dark {
+    opacity: 1;
+    transform: translateX(0);
 }

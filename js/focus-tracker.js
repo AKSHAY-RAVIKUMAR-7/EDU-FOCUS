@@ -256,28 +256,129 @@ class FocusTracker {
     }
 
     calculateFocusLevel(detection = null) {
-        let baseFocus = 80; // Base focus when face is detected
-        
-        // Adjust based on page visibility
+        // Check page visibility first
         if (document.hidden) {
             return 0;
         }
         
-        // Adjust based on detection confidence (if available)
-        if (detection && detection.detection) {
-            const confidence = detection.detection.score;
-            baseFocus = Math.min(100, baseFocus + (confidence * 20));
+        let focus = 75; // Base focus when face is detected
+        
+        if (detection && detection.landmarks && detection.expressions) {
+            try {
+                // Advanced eye analysis for accurate detection
+                const landmarks = detection.landmarks;
+                const expressions = detection.expressions;
+                
+                // Get eye landmarks
+                const leftEye = landmarks.getLeftEye();
+                const rightEye = landmarks.getRightEye();
+                
+                // Calculate Eye Aspect Ratio (EAR) for precise eye state detection
+                const leftEAR = this.calculateEyeAspectRatio(leftEye);
+                const rightEAR = this.calculateEyeAspectRatio(rightEye);
+                const avgEAR = (leftEAR + rightEAR) / 2;
+                
+                // Eye closure detection thresholds
+                const EAR_CLOSED_THRESHOLD = 0.2;   // Eyes completely closed
+                const EAR_DROWSY_THRESHOLD = 0.25;  // Eyes drowsy
+                const EAR_NORMAL_THRESHOLD = 0.3;   // Eyes normally open
+                
+                if (avgEAR < EAR_CLOSED_THRESHOLD) {
+                    // Eyes are closed - should be 0%
+                    focus = 0;
+                } else if (avgEAR < EAR_DROWSY_THRESHOLD) {
+                    // Eyes are drowsy - very low focus
+                    focus = Math.round(10 + (avgEAR - EAR_CLOSED_THRESHOLD) / (EAR_DROWSY_THRESHOLD - EAR_CLOSED_THRESHOLD) * 20);
+                } else if (avgEAR < EAR_NORMAL_THRESHOLD) {
+                    // Eyes are partially open
+                    focus = Math.round(30 + (avgEAR - EAR_DROWSY_THRESHOLD) / (EAR_NORMAL_THRESHOLD - EAR_DROWSY_THRESHOLD) * 40);
+                } else {
+                    // Eyes are fully open - calculate based on openness and other factors
+                    const eyeOpennessScore = Math.min(100, (avgEAR / 0.35) * 85);
+                    focus = Math.round(eyeOpennessScore);
+                    
+                    // Head pose analysis
+                    const nose = landmarks.getNose();
+                    if (nose && nose.length > 3) {
+                        const noseTip = nose[3];
+                        const centerX = this.canvas.width / 2;
+                        const centerY = this.canvas.height / 2;
+                        
+                        // Calculate head direction deviation
+                        const headOffsetX = Math.abs(noseTip.x - centerX) / (this.canvas.width / 2);
+                        const headOffsetY = Math.abs(noseTip.y - centerY) / (this.canvas.height / 2);
+                        
+                        // Reduce focus based on head direction (looking away)
+                        const headPenalty = (headOffsetX + headOffsetY) * 25;
+                        focus = Math.max(10, focus - headPenalty);
+                    }
+                    
+                    // Expression analysis for distraction
+                    if (expressions.surprised > 0.6) focus *= 0.7; // Distracted
+                    if (expressions.fearful > 0.5) focus *= 0.6;   // Anxious/distracted
+                    if (expressions.disgusted > 0.5) focus *= 0.8; // Distracted
+                    if (expressions.angry > 0.6) focus *= 0.7;     // Not focused on task
+                }
+                
+                // Store debug information for monitoring
+                this.lastDebugInfo = {
+                    leftEAR: leftEAR.toFixed(3),
+                    rightEAR: rightEAR.toFixed(3),
+                    avgEAR: avgEAR.toFixed(3),
+                    eyeState: avgEAR < EAR_CLOSED_THRESHOLD ? 'Closed' : 
+                             avgEAR < EAR_DROWSY_THRESHOLD ? 'Drowsy' : 'Open',
+                    rawFocus: focus
+                };
+                
+                // Update debug display
+                this.updateDebugDisplay();
+                
+            } catch (error) {
+                console.warn('Error in detailed face analysis:', error);
+                focus = 70; // Fallback focus level
+            }
+        } else {
+            // No detailed detection data available - use simpler logic
+            focus = Math.random() * 20 + 65; // Simulate 65-85% focus
         }
         
-        // Add some randomness to simulate real tracking
-        const variance = (Math.random() - 0.5) * 20; // ±10%
-        let focus = baseFocus + variance;
+        return Math.round(Math.max(0, Math.min(100, focus)));
+    }
+
+    calculateEyeAspectRatio(eye) {
+        if (!eye || eye.length < 6) return 0.3; // Default open eye value
         
-        // Adjust based on sensitivity setting
-        const sensitivityFactor = this.sensitivity / 5; // Normalize to 0-2
-        focus = focus * sensitivityFactor;
+        // Calculate Eye Aspect Ratio (EAR)
+        // EAR = (|p2-p6| + |p3-p5|) / (2 * |p1-p4|)
+        const p1 = eye[0], p2 = eye[1], p3 = eye[2];
+        const p4 = eye[3], p5 = eye[4], p6 = eye[5];
         
-        return Math.max(0, Math.min(100, Math.round(focus)));
+        const A = this.euclideanDistance(p2, p6);
+        const B = this.euclideanDistance(p3, p5);
+        const C = this.euclideanDistance(p1, p4);
+        
+        if (C === 0) return 0;
+        
+        return (A + B) / (2.0 * C);
+    }
+
+    euclideanDistance(point1, point2) {
+        const dx = point2.x - point1.x;
+        const dy = point2.y - point1.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    updateDebugDisplay() {
+        const debugElement = document.getElementById('focus-debug');
+        if (debugElement && this.lastDebugInfo) {
+            debugElement.innerHTML = `
+                <div>Left EAR: ${this.lastDebugInfo.leftEAR}</div>
+                <div>Right EAR: ${this.lastDebugInfo.rightEAR}</div>
+                <div>Avg EAR: ${this.lastDebugInfo.avgEAR}</div>
+                <div>Eye State: ${this.lastDebugInfo.eyeState}</div>
+                <div>Raw Focus: ${this.lastDebugInfo.rawFocus}%</div>
+            `;
+        }
     }
 
     updateFocusLevel(level) {

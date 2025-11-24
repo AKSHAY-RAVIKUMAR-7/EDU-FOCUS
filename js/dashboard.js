@@ -12,7 +12,23 @@ class Dashboard {
         // Initialize when dashboard becomes visible
         this.setupChartData();
         this.createFocusChart();
+        this.updateStatistics();
         this.isInitialized = true;
+    }
+    
+    // Method to refresh chart when dashboard becomes visible
+    refreshChart() {
+        if (this.isInitialized) {
+            this.setupChartData();
+            this.createFocusChart();
+        }
+    }
+    
+    // Method to update chart when theme changes
+    updateChartTheme() {
+        if (this.focusChart) {
+            this.createFocusChart();
+        }
     }
 
     setupChartData() {
@@ -71,7 +87,12 @@ class Dashboard {
 
     createFocusChart() {
         const canvas = document.getElementById('focus-chart');
-        if (!canvas) return;
+        if (!canvas) {
+            console.error('Focus chart canvas not found!');
+            return;
+        }
+
+        console.log('Creating focus chart with data:', this.chartData);
 
         const ctx = canvas.getContext('2d');
         
@@ -80,12 +101,24 @@ class Dashboard {
             this.focusChart.destroy();
         }
 
+        // Ensure canvas has proper dimensions
+        canvas.style.backgroundColor = 'transparent';
+        canvas.parentElement.style.height = '400px';
+
         const labels = this.chartData.map(item => {
             const date = new Date(item.date);
             return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         });
 
         const data = this.chartData.map(item => item.focus);
+
+        console.log('Chart labels:', labels);
+        console.log('Chart data:', data);
+
+        // Check if we're in dark theme
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#ffffff' : '#333333';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
         this.focusChart = new Chart(ctx, {
             type: 'line',
@@ -94,37 +127,48 @@ class Dashboard {
                 datasets: [{
                     label: 'Average Focus Level (%)',
                     data: data,
-                    borderColor: 'rgb(99, 102, 241)',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderColor: '#6c5ce7',
+                    backgroundColor: 'rgba(108, 92, 231, 0.15)',
                     borderWidth: 3,
                     fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: 'rgb(99, 102, 241)',
-                    pointBorderColor: '#fff',
+                    tension: 0.3,
+                    pointBackgroundColor: '#6c5ce7',
+                    pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
-                    pointRadius: 6,
+                    pointRadius: 5,
                     pointHoverRadius: 8,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
                 plugins: {
                     legend: {
                         display: true,
                         position: 'top',
                         labels: {
                             usePointStyle: true,
-                            padding: 20
+                            padding: 20,
+                            color: textColor,
+                            font: {
+                                size: 13,
+                                family: 'Inter, sans-serif'
+                            }
                         }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
                         titleColor: '#fff',
                         bodyColor: '#fff',
-                        borderColor: 'rgb(99, 102, 241)',
+                        borderColor: '#6c5ce7',
                         borderWidth: 1,
-                        displayColors: false,
+                        displayColors: true,
+                        padding: 12,
+                        cornerRadius: 8,
                         callbacks: {
                             title: function(context) {
                                 return context[0].label;
@@ -140,28 +184,67 @@ class Dashboard {
                         beginAtZero: true,
                         max: 100,
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.1)',
+                            color: gridColor,
+                            borderColor: gridColor,
+                            lineWidth: 1
+                        },
+                        border: {
+                            color: gridColor
                         },
                         ticks: {
+                            color: textColor,
+                            font: {
+                                size: 11,
+                                family: 'Inter, sans-serif'
+                            },
+                            padding: 8,
                             callback: function(value) {
                                 return value + '%';
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Focus Level (%)',
+                            color: textColor,
+                            font: {
+                                size: 12,
+                                family: 'Inter, sans-serif'
                             }
                         }
                     },
                     x: {
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.1)',
+                            color: gridColor,
+                            borderColor: gridColor,
+                            lineWidth: 1
+                        },
+                        border: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 11,
+                                family: 'Inter, sans-serif'
+                            },
+                            padding: 8
                         }
                     }
                 },
                 elements: {
                     point: {
-                        hoverBackgroundColor: 'rgb(99, 102, 241)',
+                        hoverBackgroundColor: '#6c5ce7',
+                        hoverBorderColor: '#ffffff',
+                        hoverBorderWidth: 3
+                    },
+                    line: {
+                        borderCapStyle: 'round',
+                        borderJoinStyle: 'round'
                     }
                 },
                 animation: {
-                    duration: 2000,
-                    easing: 'easeInOutQuart'
+                    duration: 1500,
+                    easing: 'easeInOutCubic'
                 }
             }
         });
@@ -575,5 +658,226 @@ document.addEventListener('DOMContentLoaded', () => {
             
             chartContainer.parentNode.insertBefore(actionsDiv, chartContainer);
         }
+    }
+    
+    // Update dashboard statistics
+    updateStatistics() {
+        const sessions = JSON.parse(localStorage.getItem('focusSessions') || '[]');
+        const pdfs = JSON.parse(localStorage.getItem('summarizedPdfs') || '[]');
+        
+        // Calculate total study time
+        let totalStudyTime = 0;
+        sessions.forEach(session => {
+            if (session.duration) {
+                totalStudyTime += session.duration;
+            }
+        });
+        
+        // Convert to hours and minutes
+        const hours = Math.floor(totalStudyTime / 3600);
+        const minutes = Math.floor((totalStudyTime % 3600) / 60);
+        
+        // Calculate average focus
+        let averageFocus = 0;
+        if (sessions.length > 0) {
+            const totalFocus = sessions.reduce((sum, session) => sum + (session.averageFocus || 0), 0);
+            averageFocus = Math.round(totalFocus / sessions.length);
+        }
+        
+        // Calculate study streak
+        const studyStreak = this.calculateStudyStreak(sessions);
+        
+        // Update DOM elements
+        const totalStudyTimeEl = document.getElementById('total-study-time');
+        const averageFocusEl = document.getElementById('average-focus');
+        const pdfsSummarizedEl = document.getElementById('pdfs-summarized');
+        const studyStreakEl = document.getElementById('study-streak');
+        
+        if (totalStudyTimeEl) {
+            totalStudyTimeEl.textContent = `${hours}h ${minutes}m`;
+        }
+        
+        if (averageFocusEl) {
+            averageFocusEl.textContent = `${averageFocus}%`;
+        }
+        
+        if (pdfsSummarizedEl) {
+            pdfsSummarizedEl.textContent = pdfs.length.toString();
+        }
+        
+        if (studyStreakEl) {
+            studyStreakEl.textContent = studyStreak.toString();
+        }
+        
+        // Update recent activity
+        this.updateRecentActivity(sessions, pdfs);\n        \n        // Update wavelength visualization\n        this.updateWavelengthVisualization(averageFocus);
+    }
+    
+    calculateStudyStreak(sessions) {
+        if (sessions.length === 0) return 0;
+        
+        // Sort sessions by date
+        const sortedSessions = sessions.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+        
+        let streak = 0;
+        let currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        
+        for (const session of sortedSessions) {
+            const sessionDate = new Date(session.startTime);
+            sessionDate.setHours(0, 0, 0, 0);
+            
+            const dayDiff = Math.floor((currentDate - sessionDate) / (1000 * 60 * 60 * 24));
+            
+            if (dayDiff === streak) {
+                streak++;
+            } else if (dayDiff > streak) {
+                break;
+            }
+        }
+        
+        return streak;
+    }
+    
+    updateRecentActivity(sessions, pdfs) {
+        const activityList = document.getElementById('activity-list');
+        if (!activityList) return;
+        
+        // Clear existing activity items except the first one (welcome message)
+        const welcomeItem = activityList.querySelector('.activity-item');
+        activityList.innerHTML = '';
+        if (welcomeItem && welcomeItem.textContent.includes('Welcome')) {
+            activityList.appendChild(welcomeItem);
+        }
+        
+        // Combine and sort recent activities
+        const activities = [];
+        
+        // Add recent focus sessions
+        sessions.slice(-5).forEach(session => {
+            activities.push({
+                type: 'focus',
+                time: session.startTime,
+                text: `Focus session completed with ${session.averageFocus || 0}% average attention`,
+                icon: 'fas fa-eye'
+            });
+        });
+        
+        // Add recent PDF summaries
+        pdfs.slice(-5).forEach(pdf => {
+            activities.push({
+                type: 'pdf',
+                time: pdf.timestamp || Date.now(),
+                text: `PDF "${pdf.name || 'Document'}" was summarized`,
+                icon: 'fas fa-file-pdf'
+            });
+        });
+        
+        // Sort by time (most recent first)
+        activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+        
+        // Add recent activities to DOM
+        activities.slice(0, 5).forEach(activity => {
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            
+            const timeAgo = this.getTimeAgo(activity.time);
+            
+            activityItem.innerHTML = `
+                <i class="${activity.icon}"></i>
+                <div class="activity-content">
+                    <span>${activity.text}</span>
+                    <small>${timeAgo}</small>
+                </div>
+            `;
+            
+            activityList.appendChild(activityItem);
+        });
+        
+        // If no activities, show a message
+        if (activities.length === 0) {
+            const noActivity = document.createElement('div');
+            noActivity.className = 'activity-item';
+            noActivity.innerHTML = `
+                <i class="fas fa-info-circle"></i>
+                <div class="activity-content">
+                    <span>No recent activity. Start a focus session or upload a PDF to see your progress!</span>
+                </div>
+            `;
+            activityList.appendChild(noActivity);
+        }
+    }
+    
+    getTimeAgo(timestamp) {
+        const now = new Date();
+        const time = new Date(timestamp);
+        const diffMs = now - time;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+        
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins} minutes ago`;
+        if (diffHours < 24) return `${diffHours} hours ago`;
+        if (diffDays < 7) return `${diffDays} days ago`;
+        return time.toLocaleDateString();
+    }
+}
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Create sample data if none exists
+    if (!localStorage.getItem('focusSessions')) {
+        const sampleSessions = [];
+        
+        // Create data for the last 7 days
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            date.setHours(10 + Math.floor(Math.random() * 8), 0, 0, 0); // Random hour between 10-18
+            
+            sampleSessions.push({
+                startTime: date.getTime(),
+                duration: 1200 + Math.floor(Math.random() * 2400), // 20-60 minutes
+                averageFocus: 65 + Math.floor(Math.random() * 30) // 65-95%
+            });
+        }
+        
+        localStorage.setItem('focusSessions', JSON.stringify(sampleSessions));
+        console.log('Created sample focus sessions:', sampleSessions);
+    }
+    
+    if (!localStorage.getItem('summarizedPdfs')) {
+        const samplePdfs = [
+            {
+                name: 'Introduction to Machine Learning.pdf',
+                timestamp: Date.now() - 86400000
+            },
+            {
+                name: 'Calculus Study Guide.pdf', 
+                timestamp: Date.now() - 172800000
+            }
+        ];
+        localStorage.setItem('summarizedPdfs', JSON.stringify(samplePdfs));
+    }
+    
+    window.dashboard = new Dashboard();
+    
+    // Update statistics when dashboard becomes visible
+    const dashboardSection = document.getElementById('dashboard');
+    if (dashboardSection) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && window.dashboard) {
+                    window.dashboard.updateStatistics();
+                }
+            });
+        });
+        observer.observe(dashboardSection);
+    }
+    
+    // Update statistics immediately if dashboard is already visible
+    if (window.dashboard) {
+        window.dashboard.updateStatistics();
     }
 });
