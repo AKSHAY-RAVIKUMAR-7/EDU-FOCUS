@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tools - Fable-Flow</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-book-open"></i>
+                <span>Fable-Flow</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../index.html#study-materials" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        Study Materials
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="study-tools.html" class="nav-link active">
+                        <i class="fas fa-tools"></i>
+                        Study Tools
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="section-header" style="margin-top: 80px;">
+            <h1>Study Tools</h1>
+            <p>Enhance your learning experience with powerful study tools</p>
+        </div>
+
+        <div class="tools-container" style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+            <!-- Flashcards Tool -->
+            <div id="flashcards" class="tool-section">
+                <div class="tool-header">
+                    <i class="fas fa-sticky-note"></i>
+                    <h2>Flashcards</h2>
+                </div>
+                <p>Create and review flashcards for effective memorization</p>
+                <div class="flashcard-container">
+                    <div class="flashcard" id="flashcard">
+                        <div class="flashcard-front">
+                            <h3>Click to add your question</h3>
+                        </div>
+                        <div class="flashcard-back" style="display: none;">
+                            <h3>Add your answer here</h3>
+                        </div>
+                    </div>
+                    <div class="flashcard-controls">
+                        <button class="btn btn-secondary" onclick="flipFlashcard()">
+                            <i class="fas fa-sync-alt"></i> Flip Card
+                        </button>
+                        <button class="btn btn-primary" onclick="addFlashcard()">
+                            <i class="fas fa-plus"></i> Add New Card
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pomodoro Timer -->
+            <div id="pomodoro" class="tool-section">
+                <div class="tool-header">
+                    <i class="fas fa-clock"></i>
+                    <h2>Pomodoro Timer</h2>
+                </div>
+                <p>Use the Pomodoro technique for better focus (25 min work, 5 min break)</p>
+                <div class="pomodoro-container">
+                    <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="timer-phase" id="timer-phase">Work Session</div>
+                    <div class="timer-controls">
+                        <button class="btn btn-primary" id="start-timer" onclick="startPomodoro()">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button class="btn btn-secondary" id="pause-timer" onclick="pausePomodoro()" disabled>
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="btn btn-danger" id="reset-timer" onclick="resetPomodoro()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                    <div class="pomodoro-stats">
+                        <div class="stat">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Completed: <strong id="completed-sessions">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Todo List -->
+            <div id="todo" class="tool-section">
+                <div class="tool-header">
+                    <i class="fas fa-tasks"></i>
+                    <h2>Todo List</h2>
+                </div>
+                <p>Organize your study tasks and assignments</p>
+                <div class="todo-container">
+                    <div class="todo-input-group">
+                        <input type="text" id="todo-input" class="todo-input" placeholder="Add a new task...">
+                        <button class="btn btn-primary" onclick="addTodo()">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                    <ul class="todo-list" id="todo-list">
+                        <li class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <span>Complete Math Assignment</span>
+                            <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                        </li>
+                        <li class="todo-item">
+                            <input type="checkbox" class="todo-checkbox">
+                            <span>Review Physics Notes</span>
+                            <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div id="progress" class="tool-section">
+                <div class="tool-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h2>Weekly Progress Tracker</h2>
+                </div>
+                <p>Monitor your learning progress throughout the week</p>
+                <div class="progress-tracker">
+                    <div class="week-grid">
+                        <div class="day-progress">
+                            <span>Mon</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%;"></div>
+                            </div>
+                            <span>4h</span>
+                        </div>
+                        <div class="day-progress">
+                            <span>Tue</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%;"></div>
+                            </div>
+                            <span>3h</span>
+                        </div>
+                        <div class="day-progress">
+                            <span>Wed</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%;"></div>
+                            </div>
+                            <span>5h</span>
+                        </div>
+                        <div class="day-progress">
+                            <span>Thu</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 40%;"></div>
+                            </div>
+                            <span>2h</span>
+                        </div>
+                        <div class="day-progress">
+                            <span>Fri</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%;"></div>
+                            </div>
+                            <span>4.5h</span>
+                        </div>
+                        <div class="day-progress">
+                            <span>Sat</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%;"></div>
+                            </div>
+                            <span>3.5h</span>
+                        </div>
+                        <div class="day-progress">
+                            <span>Sun</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 50%;"></div>
+                            </div>
+                            <span>2.5h</span>
+                        </div>
+                    </div>
+                    <div class="week-summary">
+                        <div class="summary-stat">
+                            <i class="fas fa-clock"></i>
+                            <span>Total: 25h</span>
+                        </div>
+                        <div class="summary-stat">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Daily Avg: 3.6h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/session-check.js"></script>
+    <script>
+        // Flashcard functionality
+        let currentCard = 'front';
+        function flipFlashcard() {
+            const front = document.querySelector('.flashcard-front');
+            const back = document.querySelector('.flashcard-back');
+            if (currentCard === 'front') {
+                front.style.display = 'none';
+                back.style.display = 'block';
+                currentCard = 'back';
+            } else {
+                front.style.display = 'block';
+                back.style.display = 'none';
+                currentCard = 'front';
+            }
+        }
+
+        function addFlashcard() {
+            alert('Flashcard feature coming soon! This will allow you to create custom flashcard decks.');
+        }
+
+        // Pomodoro Timer
+        let pomodoroTime = 25 * 60;
+        let pomodoroInterval;
+        let isRunning = false;
+        let isWorkSession = true;
+        let completedSessions = 0;
+
+        function startPomodoro() {
+            if (!isRunning) {
+                isRunning = true;
+                document.getElementById('start-timer').disabled = true;
+                document.getElementById('pause-timer').disabled = false;
+                
+                pomodoroInterval = setInterval(() => {
+                    pomodoroTime--;
+                    updatePomodoroDisplay();
+                    
+                    if (pomodoroTime === 0) {
+                        clearInterval(pomodoroInterval);
+                        isRunning = false;
+                        
+                        if (isWorkSession) {
+                            completedSessions++;
+                            document.getElementById('completed-sessions').textContent = completedSessions;
+                            pomodoroTime = 5 * 60;
+                            document.getElementById('timer-phase').textContent = 'Break Time!';
+                            alert('Great work! Time for a break!');
+                        } else {
+                            pomodoroTime = 25 * 60;
+                            document.getElementById('timer-phase').textContent = 'Work Session';
+                            alert('Break over! Time to focus!');
+                        }
+                        
+                        isWorkSession = !isWorkSession;
+                        updatePomodoroDisplay();
+                        document.getElementById('start-timer').disabled = false;
+                        document.getElementById('pause-timer').disabled = true;
+                    }
+                }, 1000);
+            }
+        }
+
+        function pausePomodoro() {
+            if (isRunning) {
+                clearInterval(pomodoroInterval);
+                isRunning = false;
+                document.getElementById('start-timer').disabled = false;
+                document.getElementById('pause-timer').disabled = true;
+            }
+        }
+
+        function resetPomodoro() {
+            clearInterval(pomodoroInterval);
+            isRunning = false;
+            isWorkSession = true;
+            pomodoroTime = 25 * 60;
+            document.getElementById('timer-phase').textContent = 'Work Session';
+            updatePomodoroDisplay();
+            document.getElementById('start-timer').disabled = false;
+            document.getElementById('pause-timer').disabled = true;
+        }
+
+        function updatePomodoroDisplay() {
+            const minutes = Math.floor(pomodoroTime / 60);
+            const seconds = pomodoroTime % 60;
+            document.getElementById('timer-display').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Todo List functionality
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const todoText = input.value.trim();
+            
+            if (todoText) {
+                const todoList = document.getElementById('todo-list');
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+                li.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox">
+                    <span>${todoText}</span>
+                    <button class="btn-delete" onclick="this.parentElement.remove()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                todoList.appendChild(li);
+                input.value = '';
+                
+                // Add checkbox functionality
+                li.querySelector('.todo-checkbox').addEventListener('change', function() {
+                    li.querySelector('span').style.textDecoration = 
+                        this.checked ? 'line-through' : 'none';
+                });
+            }
+        }
+
+        // Add todo on Enter key
+        document.addEventListener('DOMContentLoaded', () => {
+            const todoInput = document.getElementById('todo-input');
+            if (todoInput) {
+                todoInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        addTodo();
+                    }
+                });
+            }
+        });
+
+        function logout() {
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('userEmail');
+            window.location.href = '../login.html';
+        }
+    </script>
+
+    <style>
+        .tool-section {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-header i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .tool-header h2 {
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .flashcard-container, .pomodoro-container, .todo-container {
+            margin-top: 1.5rem;
+        }
+
+        .flashcard {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            text-align: center;
+            color: white;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .flashcard h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .flashcard-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .timer-phase {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .pomodoro-stats {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(var(--primary-color), 0.1);
+            border-radius: 10px;
+        }
+
+        .pomodoro-stats .stat {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .todo-input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .todo-item span {
+            flex: 1;
+            color: var(--text-color);
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .week-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .day-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .day-progress > span {
+            min-width: 50px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 15px;
+            transition: width 0.3s ease;
+        }
+
+        .week-summary {
+            display: flex;
+            justify-content: space-around;
+            padding: 1.5rem;
+            background: rgba(var(--primary-color), 0.1);
+            border-radius: 10px;
+        }
+
+        .summary-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .summary-stat i {
+            color: var(--primary-color);
+        }
+    </style>
+</body>
+</html>

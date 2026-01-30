@@ -2,6 +2,8 @@
 class Dashboard {
     constructor() {
         this.focusChart = null;
+        this.sessionsChart = null;
+        this.activityChart = null;
         this.chartData = [];
         this.isInitialized = false;
         
@@ -10,10 +12,11 @@ class Dashboard {
 
     init() {
         // Initialize when dashboard becomes visible
+        console.log('Dashboard initializing...');
         this.setupChartData();
-        this.createFocusChart();
         this.updateStatistics();
         this.isInitialized = true;
+        console.log('Dashboard initialized successfully');
     }
     
     // Method to refresh chart when dashboard becomes visible
@@ -270,6 +273,246 @@ class Dashboard {
             this.focusChart.data.datasets[0].data = data;
             this.focusChart.update();
         }
+    }
+
+    createSessionsChart() {
+        const canvas = document.getElementById('sessions-chart');
+        if (!canvas) {
+            console.error('Sessions chart canvas not found!');
+            return;
+        }
+
+        // Destroy existing chart if it exists
+        if (this.sessionsChart) {
+            this.sessionsChart.destroy();
+        }
+
+        const ctx = canvas.getContext('2d');
+        const sessions = JSON.parse(localStorage.getItem('focusSessions') || '[]');
+        
+        // Prepare data - count sessions per day
+        const last7Days = this.getLast7Days();
+        const sessionCounts = {};
+        const totalMinutes = {};
+        
+        last7Days.forEach(day => {
+            sessionCounts[day] = 0;
+            totalMinutes[day] = 0;
+        });
+        
+        sessions.forEach(session => {
+            const sessionDate = new Date(session.startTime).toDateString();
+            if (sessionCounts[sessionDate] !== undefined) {
+                sessionCounts[sessionDate] += 1;
+                totalMinutes[sessionDate] += session.duration / 60000; // Convert to minutes
+            }
+        });
+
+        const labels = last7Days.map(day => {
+            const date = new Date(day);
+            return date.toLocaleDateString('en-US', { weekday: 'short' });
+        });
+
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#f1f5f9' : '#1f2937';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+        this.sessionsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sessions',
+                    data: last7Days.map(day => sessionCounts[day]),
+                    backgroundColor: 'rgba(95, 61, 196, 0.7)',
+                    borderColor: '#5f3dc4',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Minutes',
+                    data: last7Days.map(day => Math.round(totalMinutes[day])),
+                    backgroundColor: 'rgba(32, 201, 151, 0.7)',
+                    borderColor: '#20c997',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            color: textColor,
+                            font: {
+                                size: 12,
+                                family: 'Inter, sans-serif'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#5f3dc4',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        beginAtZero: true,
+                        grid: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 11
+                            },
+                            stepSize: 1
+                        },
+                        title: {
+                            display: true,
+                            text: 'Sessions',
+                            color: textColor
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 11
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Minutes',
+                            color: textColor
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createActivityChart() {
+        const canvas = document.getElementById('activity-chart');
+        if (!canvas) {
+            console.error('Activity chart canvas not found!');
+            return;
+        }
+
+        // Destroy existing chart if it exists
+        if (this.activityChart) {
+            this.activityChart.destroy();
+        }
+
+        const ctx = canvas.getContext('2d');
+        const sessions = JSON.parse(localStorage.getItem('focusSessions') || '[]');
+        const pdfsSummarized = parseInt(localStorage.getItem('pdfsSummarized') || '0');
+        
+        const totalSessions = sessions.length;
+        const totalMinutes = sessions.reduce((sum, s) => sum + (s.duration / 60000), 0);
+        
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#f1f5f9' : '#1f2937';
+
+        this.activityChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Focus Tracking', 'PDF Summaries', 'Study Materials'],
+                datasets: [{
+                    data: [
+                        totalSessions || 5,
+                        pdfsSummarized || 3,
+                        8 // Study materials accessed (placeholder)
+                    ],
+                    backgroundColor: [
+                        'rgba(95, 61, 196, 0.8)',
+                        'rgba(32, 201, 151, 0.8)',
+                        'rgba(255, 215, 0, 0.8)'
+                    ],
+                    borderColor: [
+                        '#5f3dc4',
+                        '#20c997',
+                        '#ffd700'
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            color: textColor,
+                            font: {
+                                size: 12,
+                                family: 'Inter, sans-serif'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#5f3dc4',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
     }
 
     calculateWeeklyStats() {

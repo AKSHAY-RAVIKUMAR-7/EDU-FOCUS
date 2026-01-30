@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduFocus - Smart Learning Platform</title>
+    <title>Fable-Flow - Smart Learning Platform</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,8 +14,8 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <i class="fas fa-graduation-cap"></i>
-                <span>EduFocus</span>
+                <i class="fas fa-book-open"></i>
+                <span>Fable-Flow</span>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
@@ -167,11 +167,6 @@
                         <p>Study Streak</p>
                     </div>
                 </div>
-            </div>
-
-            <div class="chart-container">
-                <h3>Focus Levels Over Time</h3>
-                <canvas id="focus-chart"></canvas>
             </div>
 
             <div class="recent-activity">
@@ -343,28 +338,92 @@
                 </div>
             </div>
 
-            <div class="study-tools">
-                <h3>Study Tools</h3>
-                <div class="tools-grid">
-                    <div class="tool-card">
-                        <i class="fas fa-sticky-note"></i>
-                        <h4>Flashcards</h4>
-                        <p>Create and review flashcards for any subject</p>
+            <div class="materials-content">
+                <h3>Featured Study Materials</h3>
+                <div class="materials-grid">
+                    <div class="material-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="material-info">
+                            <h4>Mathematics Fundamentals</h4>
+                            <p>Comprehensive guide covering algebra and calculus basics</p>
+                            <span class="material-type">PDF • 2.5 MB</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="downloadMaterial('mathematics-fundamentals.pdf')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
                     </div>
-                    <div class="tool-card">
-                        <i class="fas fa-clock"></i>
-                        <h4>Pomodoro Timer</h4>
-                        <p>Use the Pomodoro technique for better focus</p>
+                    <div class="material-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="material-info">
+                            <h4>Physics: Motion and Forces</h4>
+                            <p>Detailed notes on mechanics and Newton's laws</p>
+                            <span class="material-type">PDF • 3.1 MB</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="downloadMaterial('physics-motion-forces.pdf')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
                     </div>
-                    <div class="tool-card">
-                        <i class="fas fa-tasks"></i>
-                        <h4>Todo Lists</h4>
-                        <p>Organize your study tasks and assignments</p>
+                    <div class="material-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="material-info">
+                            <h4>Chemistry: Organic Compounds</h4>
+                            <p>Introduction to organic chemistry and reactions</p>
+                            <span class="material-type">PDF • 2.8 MB</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="downloadMaterial('chemistry-organic-compounds.pdf')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
                     </div>
-                    <div class="tool-card">
-                        <i class="fas fa-chart-bar"></i>
-                        <h4>Progress Tracker</h4>
-                        <p>Monitor your learning progress over time</p>
+                    <div class="material-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="material-info">
+                            <h4>Computer Science: Data Structures</h4>
+                            <p>Arrays, linked lists, trees, and graphs explained</p>
+                            <span class="material-type">PDF • 4.2 MB</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="downloadMaterial('cs-data-structures.pdf')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                    <div class="material-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="material-info">
+                            <h4>English Literature: Poetry Analysis</h4>
+                            <p>Guide to analyzing and understanding poetry</p>
+                            <span class="material-type">PDF • 1.9 MB</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="downloadMaterial('english-poetry-analysis.pdf')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                    <div class="material-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="material-info">
+                            <h4>History: World War II Overview</h4>
+                            <p>Comprehensive timeline and key events of WWII</p>
+                            <span class="material-type">PDF • 3.5 MB</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="downloadMaterial('history-world-war-ii.pdf')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="quick-access">
+                    <h3>Quick Access</h3>
+                    <div class="quick-links">
+                        <a href="pages/study-tools.html" class="quick-link">
+                            <i class="fas fa-tools"></i>
+                            <span>Study Tools</span>
+                        </a>
+                        <a href="#pdf-summarizer" class="quick-link" onclick="showSection('pdf-summarizer')">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF Summarizer</span>
+                        </a>
+                        <a href="#focus-tracker" class="quick-link" onclick="showSection('focus-tracker')">
+                            <i class="fas fa-eye"></i>
+                            <span>Focus Tracker</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -385,16 +444,15 @@
                     <div class="profile-info">
                         <h3 id="user-name">Student</h3>
                         <p id="user-email">student@example.com</p>
-                        <button class="btn btn-secondary">Edit Profile</button>
+                        <button class="btn btn-secondary" onclick="window.app.editProfile()">
+                            <i class="fas fa-edit"></i>
+                            Edit Profile
+                        </button>
                     </div>
                 </div>
 
                 <div class="preferences-card">
                     <h3>Preferences</h3>
-                    <div class="preference-item">
-                        <label for="focus-sensitivity">Focus Sensitivity</label>
-                        <input type="range" id="focus-sensitivity" min="1" max="10" value="5">
-                    </div>
                     <div class="preference-item">
                         <label for="notifications">Notifications</label>
                         <div class="toggle-switch">
@@ -423,23 +481,64 @@
                 </div>
 
                 <div class="achievements-card">
-                    <h3>Achievements</h3>
-                    <div class="achievements-grid">
-                        <div class="achievement">
-                            <i class="fas fa-medal"></i>
-                            <span>First Study Session</span>
+                    <div class="achievements-header" onclick="toggleAchievements()">
+                        <h3><i class="fas fa-trophy"></i> Achievements</h3>
+                        <i class="fas fa-chevron-down toggle-icon" id="achievements-toggle"></i>
+                    </div>
+                    <div class="achievements-content" id="achievements-content">
+                        <div class="achievements-stats">
+                            <span><strong id="unlocked-count">1</strong> Unlocked</span>
+                            <span><strong id="total-count">12</strong> Total</span>
                         </div>
-                        <div class="achievement locked">
-                            <i class="fas fa-lock"></i>
-                            <span>1 Hour Focused</span>
-                        </div>
-                        <div class="achievement locked">
-                            <i class="fas fa-lock"></i>
-                            <span>10 PDFs Summarized</span>
-                        </div>
-                        <div class="achievement locked">
-                            <i class="fas fa-lock"></i>
-                            <span>7-Day Streak</span>
+                        <div class="achievements-grid">
+                            <div class="achievement unlocked">
+                                <i class="fas fa-medal"></i>
+                                <span>First Study Session</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-fire"></i>
+                                <span>1 Hour Focused</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-file-alt"></i>
+                                <span>10 PDFs Summarized</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>7-Day Streak</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-star"></i>
+                                <span>Perfect Focus Hour</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-crown"></i>
+                                <span>30-Day Streak</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-rocket"></i>
+                                <span>Speed Learner</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-brain"></i>
+                                <span>Knowledge Master</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-trophy"></i>
+                                <span>100 Hours Studied</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>Subject Expert</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Consistent Learner</span>
+                            </div>
+                            <div class="achievement locked">
+                                <i class="fas fa-gem"></i>
+                                <span>Elite Scholar</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -451,6 +550,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="js/theme-manager.js"></script>
     <script src="js/session-check.js"></script>
     <script src="js/app.js"></script>
     <script src="js/focus-tracker.js"></script>

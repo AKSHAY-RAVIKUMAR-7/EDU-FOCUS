@@ -189,15 +189,6 @@ class EduFocusApp {
         this.updateStats();
         this.updateActivityList();
         this.updateAchievements();
-        
-        // Initialize or refresh the focus chart
-        if (window.dashboard) {
-            setTimeout(() => {
-                window.dashboard.setupChartData();
-                window.dashboard.createFocusChart();
-                console.log('Dashboard chart refreshed');
-            }, 100);
-        }
     }
 
     updateStats() {
@@ -625,6 +616,54 @@ class EduFocusApp {
         this.saveUserData();
         this.updateStats();
     }
+
+    // Edit Profile
+    editProfile() {
+        const currentName = this.userData.profile.name;
+        const currentEmail = this.userData.profile.email;
+        const loggedInEmail = sessionStorage.getItem('userEmail') || currentEmail;
+
+        const content = `
+            <div class="edit-profile-form">
+                <div class="form-group">
+                    <label for="edit-name">Name</label>
+                    <input type="text" id="edit-name" class="form-input" value="${currentName}" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-email">Email</label>
+                    <input type="email" id="edit-email" class="form-input" value="${loggedInEmail}" readonly style="background: rgba(0,0,0,0.1); cursor: not-allowed;">
+                    <small style="color: var(--text-secondary); font-size: 0.85rem;">Email cannot be changed (logged in account)</small>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="window.app.saveProfile()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.app.closeModal()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        `;
+
+        const modal = this.createModal('Edit Profile', content);
+        document.body.appendChild(modal);
+    }
+
+    saveProfile() {
+        const nameInput = document.getElementById('edit-name');
+        const emailInput = document.getElementById('edit-email');
+
+        if (nameInput && nameInput.value.trim()) {
+            this.userData.profile.name = nameInput.value.trim();
+            this.userData.profile.email = emailInput.value;
+            this.saveUserData();
+            this.loadUserProfile();
+            this.showNotification('Profile updated successfully!', 'success');
+            this.closeModal();
+        } else {
+            this.showNotification('Please enter a valid name', 'error');
+        }
+    }
 }
 
 // Global Functions
@@ -645,6 +684,176 @@ window.resetPdfUpload = function() {
         window.pdfSummarizer.reset();
     }
 };
+
+// Toggle Achievements Dropdown
+function toggleAchievements() {
+    const content = document.getElementById('achievements-content');
+    const icon = document.getElementById('achievements-toggle');
+    
+    if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        content.style.maxHeight = content.scrollHeight + 'px';
+        icon.style.transform = 'rotate(180deg)';
+    }
+}
+
+// Download Material Function
+function downloadMaterial(filename) {
+    // Create a sample PDF content as a text file
+    const materials = {
+        'mathematics-fundamentals.pdf': {
+            title: 'Mathematics Fundamentals',
+            content: `
+MATHEMATICS FUNDAMENTALS
+========================
+
+Chapter 1: Algebra Basics
+- Variables and Constants
+- Linear Equations
+- Quadratic Equations
+- Systems of Equations
+
+Chapter 2: Calculus Introduction
+- Limits and Continuity
+- Derivatives
+- Integration
+- Applications of Calculus
+
+This is a sample study material from Fable-Flow.
+For complete materials, please refer to your course textbooks.
+            `
+        },
+        'physics-motion-forces.pdf': {
+            title: 'Physics: Motion and Forces',
+            content: `
+PHYSICS: MOTION AND FORCES
+===========================
+
+Newton's Laws of Motion:
+1. First Law - Law of Inertia
+2. Second Law - F = ma
+3. Third Law - Action and Reaction
+
+Kinematics:
+- Displacement, Velocity, Acceleration
+- Equations of Motion
+- Projectile Motion
+
+This is a sample study material from Fable-Flow.
+            `
+        },
+        'chemistry-organic-compounds.pdf': {
+            title: 'Chemistry: Organic Compounds',
+            content: `
+CHEMISTRY: ORGANIC COMPOUNDS
+=============================
+
+Introduction to Organic Chemistry:
+- Carbon bonding
+- Hydrocarbons
+- Functional Groups
+- Organic Reactions
+
+Common Compounds:
+- Alkanes, Alkenes, Alkynes
+- Alcohols, Aldehydes, Ketones
+- Carboxylic Acids and Esters
+
+This is a sample study material from Fable-Flow.
+            `
+        },
+        'cs-data-structures.pdf': {
+            title: 'Computer Science: Data Structures',
+            content: `
+COMPUTER SCIENCE: DATA STRUCTURES
+===================================
+
+Arrays and Lists:
+- Static Arrays
+- Dynamic Arrays
+- Linked Lists (Single, Double, Circular)
+
+Trees:
+- Binary Trees
+- Binary Search Trees
+- AVL Trees, Red-Black Trees
+
+Graphs:
+- Graph Representations
+- Graph Traversal (BFS, DFS)
+- Shortest Path Algorithms
+
+This is a sample study material from Fable-Flow.
+            `
+        },
+        'english-poetry-analysis.pdf': {
+            title: 'English Literature: Poetry Analysis',
+            content: `
+ENGLISH LITERATURE: POETRY ANALYSIS
+====================================
+
+Elements of Poetry:
+- Imagery and Metaphor
+- Rhyme and Rhythm
+- Theme and Tone
+- Literary Devices
+
+Analysis Techniques:
+- Close Reading
+- Historical Context
+- Author's Background
+- Interpretation Methods
+
+This is a sample study material from Fable-Flow.
+            `
+        },
+        'history-world-war-ii.pdf': {
+            title: 'History: World War II Overview',
+            content: `
+HISTORY: WORLD WAR II OVERVIEW
+================================
+
+Timeline:
+- 1939: War Begins
+- 1941: Pearl Harbor
+- 1944: D-Day Invasion
+- 1945: War Ends
+
+Major Events:
+- The Holocaust
+- Battle of Stalingrad
+- Atomic Bombs
+- Formation of United Nations
+
+This is a sample study material from Fable-Flow.
+            `
+        }
+    };
+
+    const material = materials[filename];
+    if (!material) {
+        alert('Material not found!');
+        return;
+    }
+
+    // Create a blob with the content
+    const blob = new Blob([material.content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create a temporary link and trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename.replace('.pdf', '.txt'); // Download as txt since it's sample content
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    // Show success notification
+    showNotification('Download started! Check your downloads folder.', 'success');
+}
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {

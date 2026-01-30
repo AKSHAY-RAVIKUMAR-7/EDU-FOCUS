@@ -56,8 +56,9 @@ class FocusTracker {
             this.updateStatus('Ready to start tracking');
         } catch (error) {
             console.error('Error loading face detection models:', error);
-            this.showError('Face detection models not available. Using alternative tracking method.');
+            // Use alternative tracking method without showing error notification
             this.isInitialized = true; // Allow fallback method
+            this.updateStatus('Ready to start tracking');
         }
     }
 
